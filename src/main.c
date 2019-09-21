@@ -34,8 +34,7 @@ comm_chan uart_channel;
 SemaphoreHandle_t rx_sem = NULL;
 SemaphoreHandle_t comm_sem = NULL;
 
-static void tx_task(TimerHandle_t xTimer)
-{
+static void tx_task(TimerHandle_t xTimer) {
     printf("Send task\n");
     uart_write_bytes(UART_NUM_1, (const char*)uart_channel.tx, uart_channel.tx_size);
 
@@ -43,9 +42,7 @@ static void tx_task(TimerHandle_t xTimer)
     xSemaphoreGive(rx_sem);
 }
 
-static void rx_task()
-{
-
+static void rx_task() {
     while (1) {
         // Wait to receive signal from tx_task
         xSemaphoreTake(rx_sem, portMAX_DELAY);
@@ -58,8 +55,7 @@ static void rx_task()
     }
 }
 
-static void comm_task()
-{
+static void comm_task() {
     /* Just to test command */
     uint32_t cnt = 0;
     uint8_t command[MAX_COMMAND_SIZE] = {
@@ -77,7 +73,6 @@ static void comm_task()
     /* End test */
 
     while (1) {
-
         // Wait to receive signal from rx_task
         xSemaphoreTake(comm_sem, portMAX_DELAY);
 
@@ -91,17 +86,14 @@ static void comm_task()
     }
 }
 
-static inline void initUart()
-{
-
+static inline void initUart() {
     // Init serial
     uart_config_t uart_config = {
         .baud_rate = 115200,
         .data_bits = UART_DATA_8_BITS,
         .parity = UART_PARITY_DISABLE,
         .stop_bits = UART_STOP_BITS_1,
-        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE
-    };
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE};
 
     // Init uart 1
     uart_param_config(UART_NUM_1, &uart_config);
@@ -110,9 +102,7 @@ static inline void initUart()
     uart_driver_install(UART_NUM_1, COMM_BUFF_SIZE * 2, 0, 0, NULL, 0);
 }
 
-void app_main()
-{
-
+void app_main() {
     rtc_cpu_freq_config_t old_config;
     rtc_clk_cpu_freq_get_config(&old_config);
 
