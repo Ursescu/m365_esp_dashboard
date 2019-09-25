@@ -8,12 +8,12 @@
 #define COMM_PIN_RXD (GPIO_NUM_16)
 
 /* The interval needed to send data */
-#define TX_INTERVAL (2000)
+#define TX_INTERVAL (20)
 
 /* Timeout for response */
-#define RX_TIMEOUT (500)
+#define RX_TIMEOUT (5)
 
-#define MAX_COMMAND_SIZE (100)
+#define COMM_BUFF_SIZE (BUFF_SIZE)
 
 typedef struct {
     uint8_t tx[COMM_BUFF_SIZE];
