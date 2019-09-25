@@ -13,7 +13,12 @@
 /* Timeout for response */
 #define RX_TIMEOUT (5)
 
+/* Timeout connection */
+#define COMM_TIMEOUT (1000)
+
 #define COMM_BUFF_SIZE (BUFF_SIZE)
+
+#define UART_DEVICE (UART_NUM_1)
 
 typedef struct {
     uint8_t tx[COMM_BUFF_SIZE];
@@ -21,5 +26,11 @@ typedef struct {
     uint8_t rx[COMM_BUFF_SIZE];
     uint32_t rx_size;
 } comm_chan;
+
+void comm_init(void);
+void comm_send(comm_chan *);
+void comm_recv(comm_chan *);
+
+inline void comm_copy_tx_chan(comm_chan *, uint8_t *, uint32_t);
 
 #endif
