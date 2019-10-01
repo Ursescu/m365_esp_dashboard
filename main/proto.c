@@ -21,10 +21,16 @@ uint32_t last_valid_message_time;
 
 
 uint8_t proto_verify_crc(uint8_t *message, uint8_t size) {
-    
+    unsigned long cksm = 0;
+    for (int i = 0; i < size - 2; i++)
+        cksm += message[i];
+    cksm ^= 0xFFFF;
+
+    if (cksm == message[size - 2] + (message[size - 1] << 8)) {
+        return 1;
+    }
+    return 0;
 }
-
-
 void proto_add_crc(uint8_t *message, uint8_t size) {
     unsigned long cksm = 0;
     for (int i = 2; i < size - 2; i++)
