@@ -22,6 +22,7 @@
 #include "comm.h"
 #include "proto.h"
 #include "display.h"
+#include "utils.h"
 
 /* Communication channel */
 comm_chan uart_channel;
@@ -30,15 +31,16 @@ comm_chan uart_channel;
 SemaphoreHandle_t rx_sem = NULL;
 SemaphoreHandle_t comm_sem = NULL;
 
-QueueHandle_t display_queue = xQueueCreate(10, sizeof(uint32_t));
+QueueHandle_t display_queue;
 
 static void tx_task(TimerHandle_t xTimer) {
     /* Tx task 
      * Send data at known time interval
      */
 
-    printf("Send task\n");
-    comm_send(&uart_channel);
+    // printf("Send task\n");
+    if(uart_channel.tx_size > 0)
+        comm_send(&uart_channel);
 
     /* Command written, now let the rx_task, wait for response */
     xSemaphoreGive(rx_sem);
@@ -55,6 +57,8 @@ static void rx_task() {
 
         /* Receive data from channel */
         comm_recv(&uart_channel);
+
+        // print_command(uart_channel.rx, uart_channel.rx_size);
 
         /* Pass control to comm_task */
         xSemaphoreGive(comm_sem);
@@ -110,8 +114,10 @@ void app_main() {
     printf("Core id: %d\n", xPortGetCoreID());
     /* End debug */
 
+    // display_queue = 
+
     /* Init communication channel */
-    comm_init_channel();
+    comm_init();
 
     /* Init semaphores used to dictate the tasks */
     rx_sem = xSemaphoreCreateBinary();
@@ -144,8 +150,8 @@ void app_main() {
     // processing is done on core 0
     xTaskCreatePinnedToCore(comm_task, "comm", 1024 * 4, NULL, configMAX_PRIORITIES, NULL, PROCESS_CPU);
 
-    // update the output on core 0
-    xTaskCreatePinnedToCore(display_task, "disp_task", 1024 * 4, NULL, configMAX_PRIORITIES - 1, NULL, PROCESS_CPU);
+    // // update the output on core 0
+    // xTaskCreatePinnedToCore(display_task, "disp_task", 1024 * 4, NULL, configMAX_PRIORITIES - 1, NULL, PROCESS_CPU);
 
     // rx is done on core 1
     xTaskCreatePinnedToCore(rx_task, "rx_task", 1024 * 4, NULL, configMAX_PRIORITIES, NULL, COMM_CPU);

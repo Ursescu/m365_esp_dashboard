@@ -3,15 +3,16 @@
 
 #include "driver/uart.h"
 #include "driver/gpio.h"
+#include <string.h>
 
 #define COMM_PIN_TXD (GPIO_NUM_17)
 #define COMM_PIN_RXD (GPIO_NUM_16)
 
 /* The interval needed to send data */
-#define TX_INTERVAL (20)
+#define TX_INTERVAL (50)
 
 /* Timeout for response */
-#define RX_TIMEOUT (5)
+#define RX_TIMEOUT (10)
 
 /* Timeout connection */
 #define COMM_TIMEOUT (1000)
@@ -31,6 +32,6 @@ void comm_init(void);
 void comm_send(comm_chan *);
 void comm_recv(comm_chan *);
 
-inline void comm_copy_tx_chan(comm_chan *, uint8_t *, uint32_t);
+void comm_copy_tx_chan(comm_chan *, uint8_t *, uint32_t);
 
 #endif

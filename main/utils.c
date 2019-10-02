@@ -12,7 +12,7 @@ void print_command(const uint8_t *data, const uint16_t size) {
     }
 
     for (uint8_t index = 0; index < size; index++) {
-        sprintf((char *)(data + (index * 2)), "%02x", data[index]);
+        sprintf((char *)(debug + (index * 2)), "%02x", data[index]);
     }
 
     debug[size*2] = 0; // Null terminator
