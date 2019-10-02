@@ -1,13 +1,12 @@
 #include "proto.h"
 
 #include "adc.h"
+#include "utils.h"
 
 #include <time.h>
 
 /* Get current time macro */
 #define GET_TIME() ((uint32_t)(clock() * 1000 / CLOCKS_PER_SEC))
-
-#define PROTO_CONSTANT (1.60934)
 
 /* Protocol status structure 
  * Maintaining the state between commands
@@ -18,7 +17,7 @@ uint32_t last_valid_message_time;
 
 uint8_t proto_verify_crc(uint8_t *message, uint8_t size) {
     unsigned long cksm = 0;
-    for (int i = 0; i < size - 2; i++)
+    for (int i = 2; i < size - 2; i++)
         cksm += message[i];
     cksm ^= 0xFFFF;
 
@@ -64,56 +63,95 @@ static uint8_t connected() {
     return 1;
 }
 
-static void process_command(comm_chan *channel, QueueHandle_t display_queue) {
+static void process_command(const uint8_t *command, uint16_t size) {
+    
+    // print_command(command, size);
+    // 55 aa 06 21 64 00 00 07 00 02 6b ff
     /* Verify crc */
-    if (!proto_verify_crc(channel->rx, channel->rx_size))
+    if (!proto_verify_crc(command, size))
         return;
+    // printf("After CRC \n");
+    // print_command(command, size);
 
     /* Update last good message */
     last_valid_message_time = GET_TIME();
 
-    const char *message = channel->rx;
+    // switch (command[1]) {
+    //     case 0x21:
+    //         switch (command[2]) {
+    //             case 0x01:
+    //                 if (command[2] == 0x61)
+    //                     stats.tail = message[3];
+    //                 break;
+    //             case 0x64:
+    //                 stats.eco = command[4];
+    //                 stats.led = command[5];
+    //                 stats.night = command[6];
+    //                 stats.beep = command[7];
+    //                 break;
+    //         }
+    //         break;
+    //     case 0x23:
+    //         switch (command[3]) {
+    //             case 0x7B:
+    //                 stats.ecoMode = command[4];
+    //                 stats.cruise = command[6];
+    //                 break;
+    //             case 0x7D:
+    //                 stats.tail = command[4];
+    //                 break;
+    //             case 0xB0:
+    //                 stats.alarmStatus = command[6];
+    //                 stats.lock = command[8];
+    //                 stats.battery = command[12];
+    //                 stats.velocity = (command[14] + (command[15] * 256)) / 1000 / PROTO_CONSTANT;
+    //                 stats.averageVelocity = (command[16] + (command[17] * 265)) / 1000 / PROTO_CONSTANT;
+    //                 stats.odometer = (command[18] + (command[19] * 256) + (command[20] * 256 * 256)) / 1000 / PROTO_CONSTANT;
+    //                 stats.temperature = ((command[26] + (command[27] * 256)) / 10 * 9 / 5) + 32;
+    //                 break;
+    //         }
+    // }
+}
 
-    switch (message[1]) {
-        case 0x21:
-            switch (message[2]) {
-                case 0x01:
-                    if (message[2] == 0x61)
-                        stats.tail = message[3];
-                    break;
-                case 0x64:
-                    stats.eco = message[4];
-                    stats.led = message[5];
-                    stats.night = message[6];
-                    stats.beep = message[7];
-                    break;
-            }
-            break;
-        case 0x23:
-            switch (message[3]) {
-                case 0x7B:
-                    stats.ecoMode = message[4];
-                    stats.cruise = message[6];
-                    break;
-                case 0x7D:
-                    stats.tail = message[4];
-                    break;
-                case 0xB0:
-                    stats.alarmStatus = message[6];
-                    stats.lock = message[8];
-                    stats.battery = message[12];
-                    stats.velocity = (message[14] + (message[15] * 256)) / 1000 / PROTO_CONSTANT;
-                    stats.averageVelocity = (message[16] + (message[17] * 265)) / 1000 / PROTO_CONSTANT;
-                    stats.odometer = (message[18] + (message[19] * 256) + (message[20] * 256 * 256)) / 1000 / PROTO_CONSTANT;
-                    stats.temperature = ((message[26] + (message[27] * 256)) / 10 * 9 / 5) + 32;
-                    if (stats.alarmStatus)
-                        tone(input.buzzer, 20, 400);
-                    break;
-            }
+static void process_buffer(comm_chan *channel, QueueHandle_t display_queue) {
+    uint16_t buffer_size = channel->rx_size - channel->tx_size;
+    // printf("buffer_size %hu %hu %hu \n", channel->rx_size, channel->tx_size, buffer_size);
+    /* Hack to eliminate what it's send on tx */
+    if (buffer_size <= 0 || buffer_size > COMM_BUFF_SIZE) {
+        /* Nothing to receive */
+        return;
     }
 
-    /* Send some data to display */
-    /* To be implemented */
+    uint8_t *buffer = channel->rx + channel->tx_size;
+
+    /* Multiple commands in same buffer */
+    uint8_t *command_ptr = buffer;
+    uint16_t command_size = 0;
+
+    uint16_t command_no = 0;
+    uint16_t index = 0;
+
+    while (index < buffer_size) {
+        if (index &&
+            buffer[index - 1] == PROTO_COMMAND_HEADER0 &&
+            buffer[index] == PROTO_COMMAND_HEADER1) {
+            /* We have a command header */
+            if (command_no > 0) {
+                command_size = index - 1 - command_size;
+                process_command(command_ptr, command_size);
+                command_ptr = buffer + index - 1;
+            }
+            /* Anohter command is found */
+            command_no++;
+        }
+        else if (index == buffer_size - 1) {
+            /* Send last packet */
+            command_size = index - command_size + 1;
+            process_command(command_ptr, command_size);
+            
+        }
+        index++;
+    }
 }
 
 void proto_command(comm_chan *channel, QueueHandle_t display_queue) {
@@ -122,16 +160,10 @@ void proto_command(comm_chan *channel, QueueHandle_t display_queue) {
     uint8_t brake = adc_brake();
     uint8_t speed = adc_speed();
 
-    /* Read the data, verify crc and send data to the display queue */
-    if (channel->rx_size > channel->tx_size) {
-        printf("Received something\n");
-        uint8_t status;
-
-        /* Process incoming data*/
-        process_command(channel, display_queue);
-    }
+    process_buffer(channel, display_queue);
 
     if (!connected()) {
+        printf("Not connected \n");
         messageType = 4;
     }
 
@@ -146,32 +178,38 @@ void proto_command(comm_chan *channel, QueueHandle_t display_queue) {
         case 3: {
             /* I don't know what this command does, seems to be the way to actually write the speed and brake values */
             uint8_t command[] = {0x55, 0xAA, 0x7, 0x20, 0x65, 0x0, 0x4, speed, brake, 0x0, stats.beep, 0x0, 0x0};
+            // printf("SEND DATA Command %d \n", messageType - 1);
             proto_add_crc(command, sizeof(command));
-            comm_copy_tx_chan(channel, sizeof(command));
+            comm_copy_tx_chan(channel, command, sizeof(command));
             break;
         }
         case 4: {
             uint8_t command[] = {0x55, 0xAA, 0x9, 0x20, 0x64, 0x0, 0x6, speed, brake, 0x0, stats.beep, 0x72, 0x0, 0x0, 0x0};
             proto_add_crc(command, sizeof(command));
-            comm_copy_tx_chan(channel, sizeof(command));
+            // printf("CONNECT Command %d \n", messageType - 1);
+            // printf("Command size %d \n", sizeof(command));
+            comm_copy_tx_chan(channel, command, sizeof(command));
             break;
         }
         case 5: {
             uint8_t command[] = {0x55, 0xAA, 0x6, 0x20, 0x61, 0xB0, 0x20, 0x02, speed, brake, 0x0, 0x0};
             proto_add_crc(command, sizeof(command));
-            comm_copy_tx_chan(channel, sizeof(command));
+            // printf("SHIT1 Command %d \n", messageType - 1);
+            comm_copy_tx_chan(channel, command, sizeof(command));
             break;
         }
         case 6: {
             uint8_t command[] = {0x55, 0xAA, 0x6, 0x20, 0x61, 0x7B, 0x4, 0x2, speed, brake, 0x0, 0x0};
             proto_add_crc(command, sizeof(command));
-            comm_copy_tx_chan(channel, sizeof(command));
+            // printf("SHIT2 Command %d \n", messageType - 1);
+            comm_copy_tx_chan(channel, command, sizeof(command));
             break;
         }
         case 7: {
             uint8_t command[] = {0x55, 0xAA, 0x6, 0x20, 0x61, 0x7D, 0x2, 0x2, speed, brake, 0x0, 0x0};
             proto_add_crc(command, sizeof(command));
-            comm_copy_tx_chan(channel, sizeof(command));
+            // printf("SHIT3 Command %d \n", messageType - 1);
+            comm_copy_tx_chan(channel, command, sizeof(command));
             messageType = 0;
             break;
         }

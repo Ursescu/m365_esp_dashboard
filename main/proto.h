@@ -12,6 +12,11 @@
 #define CRC1_MASK (0x00ff)
 #define CRC1_SHIFT (0)
 
+
+#define PROTO_CONSTANT (1.60934)
+#define PROTO_COMMAND_HEADER0 (0x55)
+#define PROTO_COMMAND_HEADER1 (0xAA)
+
 typedef struct __stat {
     uint8_t alarmStatus;
     uint8_t averageVelocity;
@@ -36,6 +41,6 @@ typedef struct __stat {
 void proto_add_crc(uint8_t *, uint8_t);
 uint8_t proto_verify_crc(uint8_t *, uint8_t);
 uint16_t proto_crc(const uint8_t *, uint16_t);
-void proto_command(comm_chan *);
+void proto_command(comm_chan *, QueueHandle_t);
 
 #endif
