@@ -2,6 +2,7 @@
 
 #include "adc.h"
 #include "utils.h"
+#include "buzzer.h"
 
 #include <time.h>
 
@@ -126,7 +127,7 @@ static void process_command(const uint8_t *command, uint16_t size) {
     print_stat();
 
     if(stats.alarmStatus) {
-        printf("Beeeep \n");
+        defaultBeep();
         stats.alarmStatus = 0;
     }
 
