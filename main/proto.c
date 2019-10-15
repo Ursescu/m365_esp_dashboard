@@ -50,8 +50,6 @@ uint16_t proto_crc(const uint8_t *data, uint16_t size) {
     return ret;
 }
 
-// {0x55, 0xAA, 0x4, 0x20, 0x3, 0x7C, 0x0, 0x0, 0x5C, 0xFF};
-
 static uint8_t connected() {
     /* Some way to measure the timeout, in case connection dropped */
 
@@ -63,16 +61,30 @@ static uint8_t connected() {
     return 1;
 }
 
+static void print_stat() {
+    printf("State \n");
+    printf("Tail: %hhu \n", stats.tail);
+    printf("Eco: %hhu \n", stats.eco);
+    printf("Led: %hhu \n", stats.led);
+    printf("Night: %hhu \n", stats.night);
+    printf("Beep: %hhu \n", stats.beep);
+    printf("Eco: %hhu \n", stats.ecoMode);
+    printf("Cruise: %hhu \n", stats.cruise);
+    printf("Lock: %hhu \n", stats.lock);
+    printf("Battery: %hhu \n", stats.battery);
+    printf("Velocity: %hhu \n", stats.velocity);
+    printf("AverageVelocity: %hhu \n", stats.averageVelocity);
+    printf("Odometer: %hhu \n", stats.odometer);
+    printf("Temperature: %hhu \n", stats.temperature);
+}
+
 static void process_command(const uint8_t *command, uint16_t size) {
-    
-    // print_command(command, size);
-    // 55 aa 06 21 64 00 00 07 00 02 6b ff
+
     /* Verify crc */
     if (!proto_verify_crc(command, size))
         return;
 
-
-    /* Update last good message */
+    /* Update last valid message */
     last_valid_message_time = GET_TIME();
 
     switch (command[3]) {
@@ -111,20 +123,7 @@ static void process_command(const uint8_t *command, uint16_t size) {
             }
     }
 
-    printf("State \n");
-    printf("tail: %hhu \n", stats.tail);
-    printf("eco: %hhu \n", stats.eco);
-    printf("led: %hhu \n", stats.led);
-    printf("night: %hhu \n", stats.night);
-    printf("beep: %hhu \n", stats.beep);
-    printf("eco: %hhu \n", stats.ecoMode);
-    printf("cruise: %hhu \n", stats.cruise);
-    printf("lock: %hhu \n", stats.lock);
-    printf("battery: %hhu \n", stats.battery);
-    printf("velocity: %hhu \n", stats.velocity);
-    printf("averageVelocity: %hhu \n", stats.averageVelocity);
-    printf("odometer: %hhu \n", stats.odometer);
-    printf("temperature: %hhu \n", stats.temperature);
+    print_stat();
 
     if(stats.alarmStatus) {
         printf("Beeeep \n");
@@ -134,15 +133,17 @@ static void process_command(const uint8_t *command, uint16_t size) {
 }
 
 static void process_buffer(comm_chan *channel, QueueHandle_t display_queue) {
+    /* 
+     * Hack to eliminate what it's send on tx
+     * Start reading from rx buffer at position tx_size (suppose no packet was lost in tx)
+     */
     uint16_t buffer_size = channel->rx_size - channel->tx_size;
-    printf("buffer_size %hu %hu %hu \n", channel->rx_size, channel->tx_size, buffer_size);
-    /* Hack to eliminate what it's send on tx */
+    uint8_t *buffer = channel->rx + channel->tx_size;
+
     if (buffer_size <= 0 || buffer_size > COMM_BUFF_SIZE) {
         /* Nothing to receive */
         return;
     }
-
-    uint8_t *buffer = channel->rx + channel->tx_size;
 
     /* Multiple commands in same buffer */
     uint8_t *command_ptr = buffer;
@@ -155,20 +156,19 @@ static void process_buffer(comm_chan *channel, QueueHandle_t display_queue) {
         if (index &&
             buffer[index - 1] == PROTO_COMMAND_HEADER0 &&
             buffer[index] == PROTO_COMMAND_HEADER1) {
-            /* We have a command header */
+            /* Command header detected */
             if (command_no > 0) {
+                /* If command_no is 0 it means that the header is for the first command */
                 command_size = index - 1 - command_size;
                 process_command(command_ptr, command_size);
                 command_ptr = buffer + index - 1;
             }
-            /* Anohter command is found */
             command_no++;
         }
         else if (index == buffer_size - 1) {
-            /* Send last packet */
+            /* Process last packet */
             command_size = index - command_size + 1;
             process_command(command_ptr, command_size);
-            
         }
         index++;
     }
@@ -180,6 +180,7 @@ void proto_command(comm_chan *channel, QueueHandle_t display_queue) {
     uint8_t brake = adc_brake();
     uint8_t speed = adc_speed();
 
+    /* Process what's received and update the display */
     process_buffer(channel, display_queue);
 
     if (!connected()) {
@@ -190,15 +191,14 @@ void proto_command(comm_chan *channel, QueueHandle_t display_queue) {
     /* Iterate over all message types and collect informations */
     switch (messageType++) {
         case 0:
-            /* Just for sake of completeness */
+            /* Write speed and brake */
         case 1:
-            /* Just for sake of completeness */
+            /* Write speed and brake */
         case 2:
-            /* Just for sake of completeness */
+            /* Write speed and brake */
         case 3: {
             /* I don't know what this command does, seems to be the way to actually write the speed and brake values */
             uint8_t command[] = {0x55, 0xAA, 0x7, 0x20, 0x65, 0x0, 0x4, speed, brake, 0x0, stats.beep, 0x0, 0x0};
-            // printf("SEND DATA Command %d \n", messageType - 1);
             proto_add_crc(command, sizeof(command));
             comm_copy_tx_chan(channel, command, sizeof(command));
             if(stats.beep) stats.beep = 0;
@@ -207,8 +207,6 @@ void proto_command(comm_chan *channel, QueueHandle_t display_queue) {
         case 4: {
             uint8_t command[] = {0x55, 0xAA, 0x9, 0x20, 0x64, 0x0, 0x6, speed, brake, 0x0, stats.beep, 0x72, 0x0, 0x0, 0x0};
             proto_add_crc(command, sizeof(command));
-            // printf("CONNECT Command %d \n", messageType - 1);
-            // printf("Command size %d \n", sizeof(command));
             comm_copy_tx_chan(channel, command, sizeof(command));
             if(stats.beep) stats.beep = 0;
             break;
@@ -216,21 +214,18 @@ void proto_command(comm_chan *channel, QueueHandle_t display_queue) {
         case 5: {
             uint8_t command[] = {0x55, 0xAA, 0x6, 0x20, 0x61, 0xB0, 0x20, 0x02, speed, brake, 0x0, 0x0};
             proto_add_crc(command, sizeof(command));
-            // printf("SHIT1 Command %d \n", messageType - 1);
             comm_copy_tx_chan(channel, command, sizeof(command));
             break;
         }
         case 6: {
             uint8_t command[] = {0x55, 0xAA, 0x6, 0x20, 0x61, 0x7B, 0x4, 0x2, speed, brake, 0x0, 0x0};
             proto_add_crc(command, sizeof(command));
-            // printf("SHIT2 Command %d \n", messageType - 1);
             comm_copy_tx_chan(channel, command, sizeof(command));
             break;
         }
         case 7: {
             uint8_t command[] = {0x55, 0xAA, 0x6, 0x20, 0x61, 0x7D, 0x2, 0x2, speed, brake, 0x0, 0x0};
             proto_add_crc(command, sizeof(command));
-            // printf("SHIT3 Command %d \n", messageType - 1);
             comm_copy_tx_chan(channel, command, sizeof(command));
             messageType = 0;
             break;
