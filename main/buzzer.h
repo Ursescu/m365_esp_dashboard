@@ -1,6 +1,6 @@
 #ifndef _BUZZER_H_
 #define _BUZZER_H_
-
+#include <stdio.h>
 
 #include <stdint.h>
 
