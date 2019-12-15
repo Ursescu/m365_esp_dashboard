@@ -4,6 +4,7 @@
 #include "driver/uart.h"
 #include "driver/gpio.h"
 #include <string.h>
+#include "sdkconfig.h"
 
 #define COMM_PIN_TXD (GPIO_NUM_17)
 #define COMM_PIN_RXD (GPIO_NUM_16)
