@@ -6,21 +6,21 @@
 #include <string.h>
 #include "sdkconfig.h"
 
-#define COMM_PIN_TXD (GPIO_NUM_17)
-#define COMM_PIN_RXD (GPIO_NUM_16)
+#define COMM_PIN_TXD (CONFIG_M365_TX_GPIO)
+#define COMM_PIN_RXD (CONFIG_M365_RX_GPIO)
 
 /* The interval needed to send data */
-#define TX_INTERVAL (50)
+#define TX_INTERVAL (CONFIG_M365_TX_INTERVAL)
 
 /* Timeout for response */
-#define RX_TIMEOUT (10)
+#define RX_TIMEOUT (CONFIG_M365_RX_TIMEOUT)
 
 /* Timeout connection */
 #define COMM_TIMEOUT (1000)
 
 #define COMM_BUFF_SIZE (CONFIG_M365_BUFF_SIZE)
 
-#define UART_DEVICE (UART_NUM_1)
+#define UART_DEVICE (CONFIG_M365_UART_DEVICE)
 
 typedef struct {
     uint8_t tx[COMM_BUFF_SIZE];

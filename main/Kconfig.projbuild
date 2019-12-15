@@ -1,7 +1,40 @@
 menu "M365 Dashboard"
 
+    config M365_UART_DEVICE
+        int
+        default 0 if M365_UART_DEVICE0
+        default 1 if M365_UART_DEVICE1
+        default 2 if M365_UART_DEVICE2
+        choice
+            prompt "Select UART device for M365 communication"
+            default M365_UART_DEVICE1
+
+            config M365_UART_DEVICE0
+                bool "UART 0"
+            config M365_UART_DEVICE1
+                bool "UART 1"
+            config M365_UART_DEVICE2
+                bool "UART 2"
+        endchoice
+
     config M365_BUFF_SIZE
-        int "Buffer size for M365 communication"
+        int "Buffer size for M365 communication (bytes)"
         default 128
+
+    config M365_TX_GPIO
+        int "UART TX GPIO used for M365 communication"
+        default 17
+
+    config M365_RX_GPIO
+        int "UART RX GPIO used for M365 communication"
+        default 16
+
+    config M365_TX_INTERVAL
+        int "M365 transmission interval (ms)"
+        default 50
+    
+    config M365_RX_TIMEOUT
+        int "M365 response timeout (ms)"
+        default 10
 
 endmenu
