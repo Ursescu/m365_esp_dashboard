@@ -1,7 +1,7 @@
 menu "M365 Dashboard"
 
-config M365_BUFF_SIZE
-    int "Buffer size for M365 communication"
-    default 128
+    config M365_BUFF_SIZE
+        int "Buffer size for M365 communication"
+        default 128
 
 endmenu

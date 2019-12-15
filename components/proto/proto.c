@@ -3,6 +3,7 @@
 #include "adc.h"
 #include "utils.h"
 #include "buzzer.h"
+#include "comm.h"
 
 #include <time.h>
 
@@ -82,7 +83,7 @@ static void print_stat() {
 static void process_command(const uint8_t *command, uint16_t size) {
 
     /* Verify crc */
-    if (!proto_verify_crc(command, size))
+    if (!proto_verify_crc((uint8_t *)command, size))
         return;
 
     /* Update last valid message */
