@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define DEBUG_BUFF_SIZE (BUFF_SIZE)
+#define DEBUG_BUFF_SIZE (CONFIG_M365_BUFF_SIZE)
 
 void print_command(const uint8_t *, const uint16_t);
 

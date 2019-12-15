@@ -17,7 +17,7 @@
 /* Timeout connection */
 #define COMM_TIMEOUT (1000)
 
-#define COMM_BUFF_SIZE (BUFF_SIZE)
+#define COMM_BUFF_SIZE (CONFIG_M365_BUFF_SIZE)
 
 #define UART_DEVICE (UART_NUM_1)
 
