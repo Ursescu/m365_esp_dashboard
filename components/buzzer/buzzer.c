@@ -38,24 +38,16 @@ void buzzer_init(void) {
         .gpio_num = LEDC_HS_CH0_GPIO,
         .speed_mode = LEDC_HS_MODE,
         .hpoint = 0,
-        .timer_sel = LEDC_HS_TIMER};
-
-    ledc_channel_config(&ledc_channel);
-    ledc_timer_pause(ledc_timer.speed_mode, ledc_timer.timer_num);
+        .timer_sel = LEDC_HS_TIMER,
+    };
 }
 
 static void stop_buzzer(TimerHandle_t timerHandler) {
-    ledc_timer_pause(ledc_timer.speed_mode, ledc_timer.timer_num);
-    printf("Stop beep \n");
-
-    gpio_set_direction(GPIO_NUM_18, GPIO_MODE_OUTPUT);
-    gpio_set_level(GPIO_NUM_18, 1);
+    ledc_stop(ledc_channel.speed_mode, ledc_channel.channel, 1);
 }
 
 void buzzer_default_beep() {
-    printf("Default beep\n");
     ledc_channel_config(&ledc_channel);
-    ledc_timer_resume(ledc_timer.speed_mode, ledc_timer.timer_num);
 
     uint32_t id = 2;
     TimerHandle_t tmr;
