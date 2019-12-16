@@ -126,6 +126,18 @@ static void process_command(const uint8_t *command, uint16_t size) {
 
     print_stat();
 
+    if (stats.beep == 1 && !stats.alarmStatus) {
+        buzzer_default_beep();
+    }
+    if(stats.beep == 2) {
+        buzzer_default_beep();
+        stats.beep = 1;
+    }
+    else if(stats.beep == 3){
+        buzzer_default_beep();
+        stats.beep = 1;
+    }
+
     if (stats.alarmStatus) {
         buzzer_default_beep();
         stats.alarmStatus = 0;
