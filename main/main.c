@@ -144,21 +144,21 @@ void app_main() {
     int id = 1;
     TimerHandle_t tmr;
 
-    // tmr = xTimerCreate("tx_task", pdMS_TO_TICKS(TX_INTERVAL), pdTRUE, (void*)id, &tx_task);
-    // if (xTimerStart(tmr, 10) != pdPASS) {
-    //     /* Failed to create timer task */
-    //     printf("Failed to create timer/n");
-    //     while (1) {
-    //         /* Spin forever */
-    //     }
-    // }
+    tmr = xTimerCreate("tx_task", pdMS_TO_TICKS(TX_INTERVAL), pdTRUE, (void*)id, &tx_task);
+    if (xTimerStart(tmr, 10) != pdPASS) {
+        /* Failed to create timer task */
+        printf("Failed to create timer/n");
+        while (1) {
+            /* Spin forever */
+        }
+    }
 
     // processing is done on core 0
-    // xTaskCreatePinnedToCore(comm_task, "comm", 1024 * 4, NULL, configMAX_PRIORITIES, NULL, PROCESS_CPU);
+    xTaskCreatePinnedToCore(comm_task, "comm", 1024 * 4, NULL, configMAX_PRIORITIES, NULL, PROCESS_CPU);
 
     // // update the output on core 0
     xTaskCreatePinnedToCore(display_task, "disp_task", 1024 * 4, NULL, configMAX_PRIORITIES - 1, NULL, PROCESS_CPU);
 
     // rx is done on core 1
-    // xTaskCreatePinnedToCore(rx_task, "rx_task", 1024 * 4, NULL, configMAX_PRIORITIES, NULL, COMM_CPU);
+    xTaskCreatePinnedToCore(rx_task, "rx_task", 1024 * 4, NULL, configMAX_PRIORITIES, NULL, COMM_CPU);
 }
