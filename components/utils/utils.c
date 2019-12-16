@@ -18,3 +18,7 @@ void print_command(const uint8_t *data, const uint16_t size) {
     debug[size * 2] = 0;  // Null terminator
     printf("%s <debug>: Received size %d : %s \n", __func__, size, debug);
 }
+
+uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max) {
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}

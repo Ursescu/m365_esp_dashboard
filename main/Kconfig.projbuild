@@ -101,4 +101,13 @@ menu "M365 Dashboard"
                 bool "ADC1_CH7 GPIO35"
         endchoice
 
+    config M365_ADC_MAX_THRESHOLD
+        int "ADC MAX Threshold"
+        range 40 194
+        default 190
+        help 
+            If the acceleration/brake output is greater than this value,
+            set the output to ADC_MAX. This exists so that the sensor
+            noise won't matter when you have the throttle/brake hold down
+            all the way.
 endmenu

@@ -10,4 +10,6 @@
 
 void print_command(const uint8_t *, const uint16_t);
 
+uint32_t map(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t);
+
 #endif

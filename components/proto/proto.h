@@ -16,6 +16,10 @@
 #define PROTO_COMMAND_HEADER0 (0x55)
 #define PROTO_COMMAND_HEADER1 (0xAA)
 
+#define PROTO_ADC_MIN (0x28)
+#define PROTO_ADC_MAX (0xC2)
+#define PROTO_ADC_MAX_THRESHOLD (CONFIG_M365_ADC_MAX_THRESHOLD)
+
 typedef struct __stat {
     uint8_t alarmStatus;
     uint8_t averageVelocity;
