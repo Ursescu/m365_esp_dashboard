@@ -19,6 +19,7 @@
 #define COMM_CPU 1
 
 #include "comm.h"
+#include "buzzer.h"
 #include "proto.h"
 #include "display.h"
 #include "utils.h"
@@ -119,6 +120,9 @@ void app_main() {
 
     /* Init ADC */
     adc_init();
+
+    /* Init Buzzer */
+    buzzer_init();
 
     // display_queue =
 

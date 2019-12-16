@@ -127,7 +127,7 @@ static void process_command(const uint8_t *command, uint16_t size) {
     print_stat();
 
     if (stats.alarmStatus) {
-        defaultBeep();
+        buzzer_default_beep();
         stats.alarmStatus = 0;
     }
 }
