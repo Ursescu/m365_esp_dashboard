@@ -15,6 +15,6 @@ void print_command(const uint8_t *data, const uint16_t size) {
         sprintf((char *)(debug + (index * 2)), "%02x", data[index]);
     }
 
-    debug[size*2] = 0; // Null terminator
+    debug[size * 2] = 0;  // Null terminator
     printf("%s <debug>: Received size %d : %s \n", __func__, size, debug);
 }

@@ -1,7 +1,5 @@
 #include "buzzer.h"
 
-
-
 void defaultBeep() {
     printf("Default beep\n");
 }

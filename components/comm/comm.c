@@ -16,9 +16,8 @@ void comm_init(void) {
     uart_driver_install(UART_DEVICE, COMM_BUFF_SIZE * 2, 0, 0, NULL, 0);
 }
 
-
 void comm_send(comm_chan *channel) {
-    uart_write_bytes(UART_DEVICE, (const char*)(channel->tx), channel->tx_size);
+    uart_write_bytes(UART_DEVICE, (const char *)(channel->tx), channel->tx_size);
 }
 
 void comm_recv(comm_chan *channel) {
@@ -26,7 +25,6 @@ void comm_recv(comm_chan *channel) {
 
     channel->rx_size = recv;
 };
-
 
 inline void comm_copy_tx_chan(comm_chan *channel, uint8_t *data, uint32_t size) {
     if (size >= COMM_BUFF_SIZE) {

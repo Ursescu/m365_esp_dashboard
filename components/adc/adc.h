@@ -5,7 +5,6 @@
 
 void adc_init(void);
 uint8_t adc_speed(void);
-uint8_t adc_brake(void); 
-
+uint8_t adc_brake(void);
 
 #endif

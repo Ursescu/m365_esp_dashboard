@@ -81,7 +81,6 @@ static void print_stat() {
 }
 
 static void process_command(const uint8_t *command, uint16_t size) {
-
     /* Verify crc */
     if (!proto_verify_crc((uint8_t *)command, size))
         return;
@@ -127,11 +126,10 @@ static void process_command(const uint8_t *command, uint16_t size) {
 
     print_stat();
 
-    if(stats.alarmStatus) {
+    if (stats.alarmStatus) {
         defaultBeep();
         stats.alarmStatus = 0;
     }
-
 }
 
 static void process_buffer(comm_chan *channel, QueueHandle_t display_queue) {
@@ -166,8 +164,7 @@ static void process_buffer(comm_chan *channel, QueueHandle_t display_queue) {
                 command_ptr = buffer + index - 1;
             }
             command_no++;
-        }
-        else if (index == buffer_size - 1) {
+        } else if (index == buffer_size - 1) {
             /* Process last packet */
             command_size = index - command_size + 1;
             process_command(command_ptr, command_size);
@@ -203,14 +200,16 @@ void proto_command(comm_chan *channel, QueueHandle_t display_queue) {
             uint8_t command[] = {0x55, 0xAA, 0x7, 0x20, 0x65, 0x0, 0x4, speed, brake, 0x0, stats.beep, 0x0, 0x0};
             proto_add_crc(command, sizeof(command));
             comm_copy_tx_chan(channel, command, sizeof(command));
-            if(stats.beep) stats.beep = 0;
+            if (stats.beep)
+                stats.beep = 0;
             break;
         }
         case 4: {
             uint8_t command[] = {0x55, 0xAA, 0x9, 0x20, 0x64, 0x0, 0x6, speed, brake, 0x0, stats.beep, 0x72, 0x0, 0x0, 0x0};
             proto_add_crc(command, sizeof(command));
             comm_copy_tx_chan(channel, command, sizeof(command));
-            if(stats.beep) stats.beep = 0;
+            if (stats.beep)
+                stats.beep = 0;
             break;
         }
         case 5: {

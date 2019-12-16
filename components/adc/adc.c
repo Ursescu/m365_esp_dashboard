@@ -1,10 +1,10 @@
-#include "driver/gpio.h"
 #include "driver/adc.h"
 
 #include "adc.h"
+#include "driver/gpio.h"
 
-#define DEFAULT_VREF    1100        
-#define NO_OF_SAMPLES   64
+#define DEFAULT_VREF 1100
+#define NO_OF_SAMPLES 64
 
 #define ACCEL_CHANNEL (CONFIG_M365_ACCEL_CHANNEL)
 #define BRAKE_CHANNEL (CONFIG_M365_BRAKE_CHANNEL)
@@ -21,9 +21,8 @@ void adc_init(void) {
 }
 
 uint8_t adc_speed(void) {
-
     uint32_t adc_reading = 0;
-    //Multisampling
+    // Multisampling
     for (int i = 0; i < NO_OF_SAMPLES; i++) {
         adc_reading += adc1_get_raw((adc1_channel_t)accelChannel);
     }
@@ -32,7 +31,7 @@ uint8_t adc_speed(void) {
     printf("ADC READ - SPEED %d\n", adc_reading);
 
     d += 1;
-    if(0x28 + d >= 0xC2) {
+    if (0x28 + d >= 0xC2) {
         d = 0;
     }
     return 0x28 + d;
@@ -40,7 +39,7 @@ uint8_t adc_speed(void) {
 
 uint8_t adc_brake(void) {
     uint32_t adc_reading = 0;
-    //Multisampling
+    // Multisampling
     for (int i = 0; i < NO_OF_SAMPLES; i++) {
         adc_reading += adc1_get_raw((adc1_channel_t)brakeChannel);
     }

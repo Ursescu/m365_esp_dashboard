@@ -39,7 +39,7 @@ static void tx_task(TimerHandle_t xTimer) {
      */
 
     // printf("Send task\n");
-    if(uart_channel.tx_size > 0)
+    if (uart_channel.tx_size > 0)
         comm_send(&uart_channel);
 
     /* Command written, now let the rx_task, wait for response */
@@ -120,7 +120,7 @@ void app_main() {
     /* Init ADC */
     adc_init();
 
-    // display_queue = 
+    // display_queue =
 
     /* Init communication channel */
     comm_init();

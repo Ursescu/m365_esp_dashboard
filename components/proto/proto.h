@@ -12,7 +12,6 @@
 #define CRC1_MASK (0x00ff)
 #define CRC1_SHIFT (0)
 
-
 #define PROTO_CONSTANT (1.60934)
 #define PROTO_COMMAND_HEADER0 (0x55)
 #define PROTO_COMMAND_HEADER1 (0xAA)
