@@ -32,9 +32,73 @@ menu "M365 Dashboard"
     config M365_TX_INTERVAL
         int "M365 transmission interval (ms)"
         default 50
-    
+
     config M365_RX_TIMEOUT
         int "M365 response timeout (ms)"
         default 10
+
+    config M365_ACCEL_CHANNEL
+        int
+        default 0 if M365_ACCEL_CHANNEL0
+        default 1 if M365_ACCEL_CHANNEL1
+        default 2 if M365_ACCEL_CHANNEL2
+        default 3 if M365_ACCEL_CHANNEL3
+        default 4 if M365_ACCEL_CHANNEL4
+        default 5 if M365_ACCEL_CHANNEL5
+        default 6 if M365_ACCEL_CHANNEL6
+        default 7 if M365_ACCEL_CHANNEL7
+        choice
+            prompt "Select ADC channel for acceleration sensor"
+            default M365_ACCEL_CHANNEL6
+
+            config M365_ACCEL_CHANNEL0
+                bool "ADC1_CH0 GPIO36"
+            config M365_ACCEL_CHANNEL1
+                bool "ADC1_CH1 GPIO37"
+            config M365_ACCEL_CHANNEL2
+                bool "ADC1_CH2 GPIO38"
+            config M365_ACCEL_CHANNEL3
+                bool "ADC1_CH3 GPIO39"
+            config M365_ACCEL_CHANNEL4
+                bool "ADC1_CH4 GPIO32"
+            config M365_ACCEL_CHANNEL5
+                bool "ADC1_CH5 GPIO33"
+            config M365_ACCEL_CHANNEL6
+                bool "ADC1_CH6 GPIO34"
+            config M365_ACCEL_CHANNEL7
+                bool "ADC1_CH7 GPIO35"
+        endchoice
+
+    config M365_BRAKE_CHANNEL
+        int
+        default 0 if M365_BRAKE_CHANNEL0
+        default 1 if M365_BRAKE_CHANNEL1
+        default 2 if M365_BRAKE_CHANNEL2
+        default 3 if M365_BRAKE_CHANNEL3
+        default 4 if M365_BRAKE_CHANNEL4
+        default 5 if M365_BRAKE_CHANNEL5
+        default 6 if M365_BRAKE_CHANNEL6
+        default 7 if M365_BRAKE_CHANNEL7
+        choice
+            prompt "Select ADC channel for brake sensor"
+            default M365_BRAKE_CHANNEL7
+
+            config M365_BRAKE_CHANNEL0
+                bool "ADC1_CH0 GPIO36"
+            config M365_BRAKE_CHANNEL1
+                bool "ADC1_CH1 GPIO37"
+            config M365_BRAKE_CHANNEL2
+                bool "ADC1_CH2 GPIO38"
+            config M365_BRAKE_CHANNEL3
+                bool "ADC1_CH3 GPIO39"
+            config M365_BRAKE_CHANNEL4
+                bool "ADC1_CH4 GPIO32"
+            config M365_BRAKE_CHANNEL5
+                bool "ADC1_CH5 GPIO33"
+            config M365_BRAKE_CHANNEL6
+                bool "ADC1_CH6 GPIO34"
+            config M365_BRAKE_CHANNEL7
+                bool "ADC1_CH7 GPIO35"
+        endchoice
 
 endmenu
