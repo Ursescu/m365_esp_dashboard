@@ -110,4 +110,17 @@ menu "M365 Dashboard"
             set the output to ADC_MAX. This exists so that the sensor
             noise won't matter when you have the throttle/brake hold down
             all the way.
+
+    config M365_BUZZER_GPIO
+        int "BUZZER GPIO"
+        default 18
+
+    config M365_BUZZER_FREQ
+        int "Buzzer frequency"
+        default 4000
+
+    config M365_BEEP_DURATION
+        int "Beep duration"
+        default 500
+
 endmenu
