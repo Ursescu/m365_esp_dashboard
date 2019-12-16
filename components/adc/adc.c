@@ -1,6 +1,5 @@
 #include "driver/gpio.h"
 #include "driver/adc.h"
-#include "esp_adc_cal.h"
 
 #include "adc.h"
 
@@ -16,11 +15,9 @@ static const adc_channel_t brakeChannel = BRAKE_CHANNEL;
 uint8_t d = 0;
 
 void adc_init(void) {
-    check_efuse();
-
     adc1_config_width(ADC_WIDTH_BIT_12);
-    adc1_config_channel_atten(accelChannel, ADC_ATTEN_DB_0);
-    adc1_config_channel_atten(brakeChannel, ADC_ATTEN_DB_0);
+    adc1_config_channel_atten(accelChannel, ADC_ATTEN_11db);
+    adc1_config_channel_atten(brakeChannel, ADC_ATTEN_11db);
 }
 
 uint8_t adc_speed(void) {
@@ -45,7 +42,7 @@ uint8_t adc_brake(void) {
     uint32_t adc_reading = 0;
     //Multisampling
     for (int i = 0; i < NO_OF_SAMPLES; i++) {
-        adc_reading += adc1_get_raw((adc1_channel_t)accelChannel);
+        adc_reading += adc1_get_raw((adc1_channel_t)brakeChannel);
     }
     adc_reading /= NO_OF_SAMPLES;
 

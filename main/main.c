@@ -22,6 +22,7 @@
 #include "proto.h"
 #include "display.h"
 #include "utils.h"
+#include "adc.h"
 
 /* Communication channel */
 comm_chan uart_channel;
