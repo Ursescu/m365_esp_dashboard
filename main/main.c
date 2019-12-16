@@ -1,7 +1,6 @@
 /* 
  *Main file
  */
-
 #include "freertos/FreeRTOS.h"
 #include "freertos/portable.h"
 #include "freertos/queue.h"
@@ -116,6 +115,9 @@ void app_main() {
     printf("Main app -- freq %d\n", old_config.freq_mhz);
     printf("Core id: %d\n", xPortGetCoreID());
     /* End debug */
+
+    /* Init ADC */
+    adc_init();
 
     // display_queue = 
 
