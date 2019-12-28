@@ -24,6 +24,7 @@
 #include "display.h"
 #include "utils.h"
 #include "adc.h"
+#include "leds.h"
 
 /* Communication channel */
 comm_chan uart_channel;

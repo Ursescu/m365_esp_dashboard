@@ -12,4 +12,5 @@ idf_component_register(
         display
         proto
         utils
+        ws2812
 )
