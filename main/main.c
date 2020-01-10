@@ -24,6 +24,7 @@
 #include "display.h"
 #include "utils.h"
 #include "adc.h"
+#include "preferences.h"
 
 /* Communication channel */
 comm_chan uart_channel;
@@ -117,6 +118,8 @@ void app_main() {
     printf("Main app -- freq %d\n", old_config.freq_mhz);
     printf("Core id: %d\n", xPortGetCoreID());
     /* End debug */
+
+    preferences_init();
 
     /* Init ADC */
     adc_init();
