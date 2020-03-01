@@ -27,6 +27,7 @@
 #include "utils.h"
 #include "adc.h"
 #include "preferences.h"
+#include "wifi.h"
 
 /* Communication channel */
 comm_chan uart_channel;
@@ -109,6 +110,20 @@ static void display_task() {
     }
 }
 
+#define PIN_LED 25
+
+static void wifi_task() {
+    gpio_set_direction(PIN_LED, GPIO_MODE_OUTPUT);
+    gpio_set_level(PIN_LED, 0);
+    wifi_init();
+
+    while (1) {
+        gpio_set_level(PIN_LED, 1);
+        vTaskDelay(100 / portTICK_PERIOD_MS);
+        gpio_set_level(PIN_LED, 0);
+    }
+}
+
 void app_main() {
     /* Esp-idf entry point */
 
@@ -127,6 +142,7 @@ void app_main() {
 
     /* Init Buzzer */
     buzzer_init();
+    buzzer_default_beep();
 
     /* Init communication channel */
     comm_init();
@@ -166,4 +182,6 @@ void app_main() {
 
     // rx is done on core 1
     xTaskCreatePinnedToCore(rx_task, "rx_task", 1024 * 4, NULL, configMAX_PRIORITIES, NULL, COMM_CPU);
+
+    // xTaskCreatePinnedToCore(wifi_task, "wifi_task", 1024 * 4, NULL, configMAX_PRIORITIES, NULL, PROCESS_CPU);
 }
