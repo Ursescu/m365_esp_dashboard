@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#define TAG "main"
 #define PROCESS_CPU 0
 #define COMM_CPU 1
 
@@ -95,14 +96,14 @@ static void display_task() {
      * nothing else is doing work
      */
 
-    initDisplay();
+    display_init();
 
     while (1) {
         /* Get from queue and process it */
 
         /* data = queue get */
 
-        refreshDisplay();
+        display_refresh();
         /* update(data) */
     }
 }
@@ -114,8 +115,8 @@ void app_main() {
     rtc_cpu_freq_config_t old_config;
     rtc_clk_cpu_freq_get_config(&old_config);
 
-    printf("Main app -- freq %d\n", old_config.freq_mhz);
-    printf("Core id: %d\n", xPortGetCoreID());
+    ESP_LOGI(TAG, "Main app, running freq %d", old_config.freq_mhz);
+    ESP_LOGI(TAG, "Core id: %d", xPortGetCoreID());
     /* End debug */
 
     /* Init ADC */
@@ -123,8 +124,6 @@ void app_main() {
 
     /* Init Buzzer */
     buzzer_init();
-
-    // display_queue =
 
     /* Init communication channel */
     comm_init();
@@ -144,7 +143,6 @@ void app_main() {
     /* This is the main task to send data.
      * I need to be sure that command is prepared until next period. (20 ms)
      */
-
     int id = 1;
     TimerHandle_t tmr;
 

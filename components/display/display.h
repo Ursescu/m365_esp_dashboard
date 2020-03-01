@@ -1,8 +1,8 @@
 #ifndef _DISPLAY_H_
 #define _DISPLAY_H_
 
-void refreshDisplay();
+void display_refresh(void);
 
-void initDisplay();
+void display_init(void);
 
 #endif

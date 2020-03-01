@@ -699,12 +699,12 @@ static void poly_demo() {
     Wait(-GDEMO_INFO_TIME);
 }
 
-void refreshDisplay() {
+void display_refresh() {
     printf("pixel\n");
     pixel_demo();
 }
 
-void initDisplay() {
+void display_init() {
     esp_err_t ret;
 
     // === SET GLOBAL VARIABLES ==========================
