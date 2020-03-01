@@ -28,6 +28,7 @@
 #include "adc.h"
 #include "preferences.h"
 #include "wifi.h"
+#include "fs.h"
 
 /* Communication channel */
 comm_chan uart_channel;

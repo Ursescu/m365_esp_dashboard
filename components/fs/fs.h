@@ -1,0 +1,2 @@
+
+void fs_init();
