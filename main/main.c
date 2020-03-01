@@ -96,12 +96,12 @@ static void display_task() {
      */
 
     initDisplay();
+
     while (1) {
         /* Get from queue and process it */
 
         /* data = queue get */
 
-        vTaskDelay(100 / portTICK_PERIOD_MS);
         refreshDisplay();
         /* update(data) */
     }
