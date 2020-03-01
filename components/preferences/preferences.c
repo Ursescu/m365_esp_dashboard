@@ -1,21 +1,117 @@
-#include "nvs.h"
 #include "preferences.h"
-#include "utils.h"
 
-const char* nvs_errors[] = {"OTHER", "NOT_INITIALIZED", "NOT_FOUND", "TYPE_MISMATCH", "READ_ONLY", "NOT_ENOUGH_SPACE", "INVALID_NAME", "INVALID_HANDLE", "REMOVE_FAILED", "KEY_TOO_LONG", "PAGE_FULL", "INVALID_STATE", "INVALID_LENGHT"};
-#define nvs_error(e) (((e) > ESP_ERR_NVS_BASE) ? nvs_errors[(e) & ~(ESP_ERR_NVS_BASE)] : nvs_errors[0])
+#include <string.h>
+
+#include "nvs.h"
+#include "nvs_flash.h"
+#include "esp_system.h"
+
+#define TAG "preferences"
 
 nvs_handle_t handle;
+Preferences dashboard_preferences;
 
-Preferences storedPreferences;
-Preferences currentPreferences;
+/*
+ *  Default config preferences. Update it when preferences 
+ *  structure is changed.
+ */ 
+static const Preferences default_preferences = (Preferences){
+    10,
+    20,
+    15,
+    "Default",
+};
 
-bool preferences_init() {
-    esp_err_t err = nvs_open("M365", NVS_READWRITE, &handle);
 
-    if (err) {
-        ESP_LOGE(TAG, "nvs_open failed: %s", nvs_error(err));
+bool preferences_init(void) {
+    esp_err_t err;
+
+    err = nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+        ESP_LOGI(TAG, "NVS partition was truncated and needs to be erased");
         return false;
     }
+
+    ESP_LOGI(TAG, "Opening Non-Volatile Storage (NVS) handle");
+    err = nvs_open(NVS_NAMESPACE, NVS_READWRITE, &handle);
+
+    if (err != ESP_OK) {
+        ESP_LOGI(TAG, "nvs_open failed: %s", esp_err_to_name(err));
+        return false;
+    }
+    ESP_LOGI(TAG, "Done");
+
+    /*
+     * Read the saved preferences from NVS into the extern dashboard_preferences.
+     */
+    ESP_LOGI(TAG, "Reading saved preferences NVS");
+
+    // Read the size of memory space required for preferinces
+    size_t saved_size = 0;  // value will default to 0, if not set yet in NVS
+    err = nvs_get_blob(handle, "preferences", NULL, &saved_size);
+
+    if (err != ESP_OK && err != ESP_ERR_NVS_NOT_FOUND) {
+        ESP_LOGE(TAG, "Failed to get preferences size: %s", esp_err_to_name(err));
+        return false;
+    }
+
+    // Read previously saved preferences if available
+    if (saved_size == sizeof(Preferences)) {
+        // Size of preferences matching .
+
+        err = nvs_get_blob(handle, "preferences", &dashboard_preferences, &saved_size);
+        if (err != ESP_OK) {
+            ESP_LOGE(TAG, "Failed to read the preferences: %s", esp_err_to_name(err));
+            return false;
+        }
+    } else {
+        // Drop saved preferences, missmatch or not saved.
+        ESP_LOGI(TAG, "Drop saved preferences, missmatch of preference structure size. Set the default preferences");
+        memcpy(&dashboard_preferences, &default_preferences, sizeof(Preferences));
+    }
+
+    nvs_close(handle);
+
     return true;
+}
+
+bool preferences_save(void) {
+    esp_err_t err;
+
+    ESP_LOGI(TAG, "Opening Non-Volatile Storage (NVS) handle...");
+    err = nvs_open(NVS_NAMESPACE, NVS_READWRITE, &handle);
+
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "nvs_open failed: %s", esp_err_to_name(err));
+        return false;
+    }
+    ESP_LOGI(TAG, "Done");
+
+    err = nvs_set_blob(handle, "preferences", &dashboard_preferences, sizeof(Preferences));
+
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to save preferences failed: %s", esp_err_to_name(err));
+        nvs_close(handle);
+        return false;
+    }
+
+    // Commit
+    err = nvs_commit(handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to commit preferences: %s", esp_err_to_name(err));
+        nvs_close(handle);
+        return false;
+    }
+
+    // Close
+    nvs_close(handle);
+    return true;
+}
+
+void preferences_print(void) {
+    printf("Preferences:\n");
+    printf("size: %hhu\n", dashboard_preferences.size);
+    printf("max speed: %hhu\n", dashboard_preferences.max_speed);
+    printf("min speed: %hhu\n", dashboard_preferences.min_speed);
+    printf("name: %s\n", dashboard_preferences.name);
 }
