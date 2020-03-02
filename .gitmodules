@@ -1,3 +1,3 @@
 [submodule "externals/ESP32_TFT_library"]
 	path = externals/ESP32_TFT_library
-	url = ../../jeremyjh/ESP32_TFT_library.git
+	url = ../../rontav/ESP32_TFT_library.git
