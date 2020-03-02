@@ -41,7 +41,6 @@ static void tx_task(TimerHandle_t xTimer) {
      * Send data at known time interval
      */
 
-    // printf("Send task\n");
     if (uart_channel.tx_size > 0)
         comm_send(&uart_channel);
 
@@ -135,7 +134,7 @@ void app_main() {
 
     if (rx_sem == NULL || comm_sem == NULL) {
         /* Failed to init semaphore */
-        printf("Failed to create semaphores/n");
+        ESP_LOGE(TAG, "Failed to create semaphores\n");
         while (1) {
             /* Spin forever */
         }
@@ -150,14 +149,14 @@ void app_main() {
     tmr = xTimerCreate("tx_task", pdMS_TO_TICKS(TX_INTERVAL), pdTRUE, (void*)id, &tx_task);
     if (xTimerStart(tmr, 10) != pdPASS) {
         /* Failed to create timer task */
-        printf("Failed to create timer/n");
+        ESP_LOGE(TAG, "Failed to create timer\n");
         while (1) {
             /* Spin forever */
         }
     }
 
     // processing is done on core 0
-    xTaskCreatePinnedToCore(comm_task, "comm", 1024 * 4, NULL, configMAX_PRIORITIES, NULL, PROCESS_CPU);
+    xTaskCreatePinnedToCore(comm_task, "comm_task", 1024 * 4, NULL, configMAX_PRIORITIES, NULL, PROCESS_CPU);
 
     // // update the output on core 0
     xTaskCreatePinnedToCore(display_task, "disp_task", 1024 * 4, NULL, configMAX_PRIORITIES - 1, NULL, PROCESS_CPU);
