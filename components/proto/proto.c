@@ -63,20 +63,19 @@ static uint8_t connected() {
 }
 
 static void print_stats() {
-    ESP_LOGV("State \n");
-    ESP_LOGV("Tail: %hhu \n", proto_mainboard_stats.tail);
-    ESP_LOGV("Eco: %hhu \n", proto_mainboard_stats.eco);
-    ESP_LOGV("Led: %hhu \n", proto_mainboard_stats.led);
-    ESP_LOGV("Night: %hhu \n", proto_mainboard_stats.night);
-    ESP_LOGV("proto_mainboard_Beep: %hhu \n", proto_mainboard_stats.beep);
-    ESP_LOGV("Eco: %hhu \n", proto_mainboard_stats.ecoMode);
-    ESP_LOGV("Cruise: %hhu \n", proto_mainboard_stats.cruise);
-    ESP_LOGV("Lock: %hhu \n", proto_mainboard_stats.lock);
-    ESP_LOGV("Battery: %hhu \n", proto_mainboard_stats.battery);
-    ESP_LOGV("Velocity: %hhu \n", proto_mainboard_stats.velocity);
-    ESP_LOGV("AverageVelocity: %hhu \n", proto_mainboard_stats.averageVelocity);
-    ESP_LOGV("Odometer: %hhu \n", proto_mainboard_stats.odometer);
-    ESP_LOGV("Temperature: %hhu \n", proto_mainboard_stats.temperature);
+    ESP_LOGV(TAG, "Tail: %hhu \n", proto_mainboard_stats.tail);
+    ESP_LOGV(TAG, "Eco: %hhu \n", proto_mainboard_stats.eco);
+    ESP_LOGV(TAG, "Led: %hhu \n", proto_mainboard_stats.led);
+    ESP_LOGV(TAG, "Night: %hhu \n", proto_mainboard_stats.night);
+    ESP_LOGV(TAG, "proto_mainboard_Beep: %hhu \n", proto_mainboard_stats.beep);
+    ESP_LOGV(TAG, "Eco: %hhu \n", proto_mainboard_stats.ecoMode);
+    ESP_LOGV(TAG, "Cruise: %hhu \n", proto_mainboard_stats.cruise);
+    ESP_LOGV(TAG, "Lock: %hhu \n", proto_mainboard_stats.lock);
+    ESP_LOGV(TAG, "Battery: %hhu \n", proto_mainboard_stats.battery);
+    ESP_LOGV(TAG, "Velocity: %hhu \n", proto_mainboard_stats.velocity);
+    ESP_LOGV(TAG, "AverageVelocity: %hhu \n", proto_mainboard_stats.averageVelocity);
+    ESP_LOGV(TAG, "Odometer: %hhu \n", proto_mainboard_stats.odometer);
+    ESP_LOGV(TAG, "Temperature: %hhu \n", proto_mainboard_stats.temperature);
 }
 
 static void process_command(const uint8_t *command, uint16_t size) {

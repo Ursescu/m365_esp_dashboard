@@ -3,9 +3,6 @@
 
 #include <stdint.h>
 #include <stdio.h>
-
-extern const char *TAG;
-
 #include "esp_log.h"
 #include "sdkconfig.h"
 

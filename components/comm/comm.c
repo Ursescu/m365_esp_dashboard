@@ -1,3 +1,4 @@
+#include "esp_log.h"
 #include "comm.h"
 
 #define TAG "comm"

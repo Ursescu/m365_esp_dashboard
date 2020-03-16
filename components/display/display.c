@@ -14,6 +14,8 @@
 #include "display.h"
 #include "proto.h"
 
+#define TAG "display"
+
 static time_t time_now, time_last = 0;
 
 char velocityBuffer[10];
