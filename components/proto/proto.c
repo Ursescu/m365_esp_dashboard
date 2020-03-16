@@ -10,6 +10,8 @@
 /* Get current time macro */
 #define GET_TIME() ((uint32_t)(clock() * 1000 / CLOCKS_PER_SEC))
 
+#define TAG "proto"
+
 /* Protocol status structure 
  * Maintaining the state between commands
  */
@@ -63,21 +65,21 @@ static uint8_t connected() {
     return 1;
 }
 
-static void print_stat() {
-    printf("State \n");
-    printf("Tail: %hhu \n", proto_mainboard_stats.tail);
-    printf("Eco: %hhu \n", proto_mainboard_stats.eco);
-    printf("Led: %hhu \n", proto_mainboard_stats.led);
-    printf("Night: %hhu \n", proto_mainboard_stats.night);
-    printf("proto_mainboard_Beep: %hhu \n", proto_mainboard_stats.beep);
-    printf("Eco: %hhu \n", proto_mainboard_stats.ecoMode);
-    printf("Cruise: %hhu \n", proto_mainboard_stats.cruise);
-    printf("Lock: %hhu \n", proto_mainboard_stats.lock);
-    printf("Battery: %hhu \n", proto_mainboard_stats.battery);
-    printf("Velocity: %hhu \n", proto_mainboard_stats.velocity);
-    printf("AverageVelocity: %hhu \n", proto_mainboard_stats.averageVelocity);
-    printf("Odometer: %hhu \n", proto_mainboard_stats.odometer);
-    printf("Temperature: %hhu \n", proto_mainboard_stats.temperature);
+static void print_stats() {
+    ESP_LOGV("State \n");
+    ESP_LOGV("Tail: %hhu \n", proto_mainboard_stats.tail);
+    ESP_LOGV("Eco: %hhu \n", proto_mainboard_stats.eco);
+    ESP_LOGV("Led: %hhu \n", proto_mainboard_stats.led);
+    ESP_LOGV("Night: %hhu \n", proto_mainboard_stats.night);
+    ESP_LOGV("proto_mainboard_Beep: %hhu \n", proto_mainboard_stats.beep);
+    ESP_LOGV("Eco: %hhu \n", proto_mainboard_stats.ecoMode);
+    ESP_LOGV("Cruise: %hhu \n", proto_mainboard_stats.cruise);
+    ESP_LOGV("Lock: %hhu \n", proto_mainboard_stats.lock);
+    ESP_LOGV("Battery: %hhu \n", proto_mainboard_stats.battery);
+    ESP_LOGV("Velocity: %hhu \n", proto_mainboard_stats.velocity);
+    ESP_LOGV("AverageVelocity: %hhu \n", proto_mainboard_stats.averageVelocity);
+    ESP_LOGV("Odometer: %hhu \n", proto_mainboard_stats.odometer);
+    ESP_LOGV("Temperature: %hhu \n", proto_mainboard_stats.temperature);
 }
 
 static void process_command(const uint8_t *command, uint16_t size) {
@@ -195,7 +197,7 @@ void proto_command(comm_chan *channel, QueueHandle_t display_queue) {
     process_buffer(channel, display_queue);
 
     if (!connected()) {
-        printf("Not connected \n");
+        ESP_LOGD(TAG, "Not connected \n");
         messageType = 4;
     }
 

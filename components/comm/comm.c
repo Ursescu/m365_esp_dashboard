@@ -1,5 +1,7 @@
 #include "comm.h"
 
+#define TAG "comm"
+
 void comm_init(void) {
     /* Init serial */
     uart_config_t uart_config = {
@@ -29,7 +31,7 @@ void comm_recv(comm_chan *channel) {
 inline void comm_copy_tx_chan(comm_chan *channel, uint8_t *data, uint32_t size) {
     if (size >= COMM_BUFF_SIZE) {
         /* Too much data */
-        printf("%s <error>: Communication channel buffer to small %d > %d\n", __func__, size, COMM_BUFF_SIZE);
+        ESP_LOGE(TAG, "%s: Communication channel buffer to small %d > %d\n", __func__, size, COMM_BUFF_SIZE);
         return;
     }
 

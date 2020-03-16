@@ -1,6 +1,6 @@
 #include "utils.h"
 
-const char *TAG = "M365";
+#define TAG "utils"
 
 uint8_t debug[DEBUG_BUFF_SIZE + 1] = {
     0,
@@ -8,7 +8,7 @@ uint8_t debug[DEBUG_BUFF_SIZE + 1] = {
 
 void print_command(const uint8_t *data, const uint16_t size) {
     if ((size * 2) > DEBUG_BUFF_SIZE) {
-        printf("%s <error>: Debug buffer to small %d > %d\n", __func__, size, DEBUG_BUFF_SIZE);
+        ESP_LOGE(TAG, "%s: Debug buffer to small %d > %d\n", __func__, size, DEBUG_BUFF_SIZE);
 
         return;
     }
@@ -18,7 +18,7 @@ void print_command(const uint8_t *data, const uint16_t size) {
     }
 
     debug[size * 2] = 0;  // Null terminator
-    printf("%s <debug>: Received size %d : %s \n", __func__, size, debug);
+    ESP_LOGD(TAG, "%s: Received size %d : %s \n", __func__, size, debug);
 }
 
 uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max) {

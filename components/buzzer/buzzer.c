@@ -4,6 +4,8 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/timers.h"
 
+#define TAG "buzzer"
+
 #define LEDC_HS_TIMER LEDC_TIMER_0
 #define LEDC_HS_MODE LEDC_HIGH_SPEED_MODE
 
@@ -55,7 +57,7 @@ void buzzer_default_beep() {
     tmr = xTimerCreate("buzzer", pdMS_TO_TICKS(DEFAULT_BEEP_DURATION), pdFALSE, (void*)id, &stop_buzzer);
     if (xTimerStart(tmr, 10) != pdPASS) {
         /* Failed to create timer task */
-        printf("Failed to create timer/n");
+        ESP_LOGE(TAG, "Failed to create buzzer timer\n");
         while (1) {
             /* Spin forever */
         }
@@ -64,5 +66,5 @@ void buzzer_default_beep() {
 
 /* LEDC esp32 documentation */
 void buzzer_beep(uint32_t freq, uint32_t on_time, uint32_t off_time, uint8_t beeps) {
-    printf("Beep\n");
+    ESP_LOGV(TAG, "Beep\n");
 }
