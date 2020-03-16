@@ -4,6 +4,9 @@
 #include <stdint.h>
 #include <stdio.h>
 
+extern const char *TAG;
+
+#include "esp_log.h"
 #include "sdkconfig.h"
 
 #define DEBUG_BUFF_SIZE (CONFIG_M365_BUFF_SIZE)

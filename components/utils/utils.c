@@ -1,5 +1,7 @@
 #include "utils.h"
 
+const char *TAG = "M365";
+
 uint8_t debug[DEBUG_BUFF_SIZE + 1] = {
     0,
 };

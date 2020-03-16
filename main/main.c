@@ -26,6 +26,7 @@
 #include "display.h"
 #include "utils.h"
 #include "adc.h"
+#include "preferences.h"
 
 /* Communication channel */
 comm_chan uart_channel;
@@ -118,6 +119,8 @@ void app_main() {
     ESP_LOGI(TAG, "Main app, running freq %d", old_config.freq_mhz);
     ESP_LOGI(TAG, "Core id: %d", xPortGetCoreID());
     /* End debug */
+
+    preferences_init();
 
     /* Init ADC */
     adc_init();
