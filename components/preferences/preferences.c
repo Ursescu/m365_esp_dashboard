@@ -16,12 +16,11 @@ Preferences dashboard_preferences;
  *  structure is changed.
  */ 
 static const Preferences default_preferences = (Preferences){
-    10,
-    20,
-    15,
-    "Default",
+    .size = 10,
+    .max_speed = 20,
+    .min_speed = 15,
+    .name = "Default",
 };
-
 
 bool preferences_init(void) {
     esp_err_t err;
