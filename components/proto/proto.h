@@ -41,6 +41,9 @@ typedef struct __stat {
     uint8_t velocity;
 } proto_stat;
 
+extern proto_stat proto_mainboard_stats;
+
+
 void proto_add_crc(uint8_t *, uint8_t);
 uint8_t proto_verify_crc(uint8_t *, uint8_t);
 uint16_t proto_crc(const uint8_t *, uint16_t);

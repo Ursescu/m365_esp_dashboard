@@ -13,7 +13,7 @@
 /* Protocol status structure 
  * Maintaining the state between commands
  */
-proto_stat stats;
+proto_stat proto_mainboard_stats;
 
 uint32_t last_valid_message_time;
 
@@ -65,19 +65,19 @@ static uint8_t connected() {
 
 static void print_stat() {
     printf("State \n");
-    printf("Tail: %hhu \n", stats.tail);
-    printf("Eco: %hhu \n", stats.eco);
-    printf("Led: %hhu \n", stats.led);
-    printf("Night: %hhu \n", stats.night);
-    printf("Beep: %hhu \n", stats.beep);
-    printf("Eco: %hhu \n", stats.ecoMode);
-    printf("Cruise: %hhu \n", stats.cruise);
-    printf("Lock: %hhu \n", stats.lock);
-    printf("Battery: %hhu \n", stats.battery);
-    printf("Velocity: %hhu \n", stats.velocity);
-    printf("AverageVelocity: %hhu \n", stats.averageVelocity);
-    printf("Odometer: %hhu \n", stats.odometer);
-    printf("Temperature: %hhu \n", stats.temperature);
+    printf("Tail: %hhu \n", proto_mainboard_stats.tail);
+    printf("Eco: %hhu \n", proto_mainboard_stats.eco);
+    printf("Led: %hhu \n", proto_mainboard_stats.led);
+    printf("Night: %hhu \n", proto_mainboard_stats.night);
+    printf("proto_mainboard_Beep: %hhu \n", proto_mainboard_stats.beep);
+    printf("Eco: %hhu \n", proto_mainboard_stats.ecoMode);
+    printf("Cruise: %hhu \n", proto_mainboard_stats.cruise);
+    printf("Lock: %hhu \n", proto_mainboard_stats.lock);
+    printf("Battery: %hhu \n", proto_mainboard_stats.battery);
+    printf("Velocity: %hhu \n", proto_mainboard_stats.velocity);
+    printf("AverageVelocity: %hhu \n", proto_mainboard_stats.averageVelocity);
+    printf("Odometer: %hhu \n", proto_mainboard_stats.odometer);
+    printf("Temperature: %hhu \n", proto_mainboard_stats.temperature);
 }
 
 static void process_command(const uint8_t *command, uint16_t size) {
@@ -93,54 +93,54 @@ static void process_command(const uint8_t *command, uint16_t size) {
             switch (command[4]) {
                 case 0x01:
                     if (command[4] == 0x61)
-                        stats.tail = command[5];
+                        proto_mainboard_stats.tail = command[5];
                     break;
                 case 0x64:
-                    stats.eco = command[6];
-                    stats.led = command[7];
-                    stats.night = command[8];
-                    stats.beep = command[9];
+                    proto_mainboard_stats.eco = command[6];
+                    proto_mainboard_stats.led = command[7];
+                    proto_mainboard_stats.night = command[8];
+                    proto_mainboard_stats.beep = command[9];
                     break;
             }
             break;
         case 0x23:
             switch (command[5]) {
                 case 0x7B:
-                    stats.ecoMode = command[6];
-                    stats.cruise = command[8];
+                    proto_mainboard_stats.ecoMode = command[6];
+                    proto_mainboard_stats.cruise = command[8];
                     break;
                 case 0x7D:
-                    stats.tail = command[6];
+                    proto_mainboard_stats.tail = command[6];
                     break;
                 case 0xB0:
-                    stats.alarmStatus = command[8];
-                    stats.lock = command[10];
-                    stats.battery = command[14];
-                    stats.velocity = (command[16] + (command[17] * 256)) / 1000 / PROTO_CONSTANT;
-                    stats.averageVelocity = (command[18] + (command[19] * 265)) / 1000 / PROTO_CONSTANT;
-                    stats.odometer = (command[20] + (command[21] * 256) + (command[22] * 256 * 256)) / 1000 / PROTO_CONSTANT;
-                    stats.temperature = ((command[28] + (command[29] * 256)) / 10 * 9 / 5) + 32;
+                    proto_mainboard_stats.alarmStatus = command[8];
+                    proto_mainboard_stats.lock = command[10];
+                    proto_mainboard_stats.battery = command[14];
+                    proto_mainboard_stats.velocity = (command[16] + (command[17] * 256)) / 1000 / PROTO_CONSTANT;
+                    proto_mainboard_stats.averageVelocity = (command[18] + (command[19] * 265)) / 1000 / PROTO_CONSTANT;
+                    proto_mainboard_stats.odometer = (command[20] + (command[21] * 256) + (command[22] * 256 * 256)) / 1000 / PROTO_CONSTANT;
+                    proto_mainboard_stats.temperature = ((command[28] + (command[29] * 256)) / 10 * 9 / 5) + 32;
                     break;
             }
     }
 
-    print_stat();
+    print_stats();
 
-    if (stats.beep == 1 && !stats.alarmStatus) {
+    if (proto_mainboard_stats.beep == 1 && !proto_mainboard_stats.alarmStatus) {
         buzzer_default_beep();
     }
-    if(stats.beep == 2) {
+    if(proto_mainboard_stats.beep == 2) {
         buzzer_default_beep();
-        stats.beep = 1;
+        proto_mainboard_stats.beep = 1;
     }
-    else if(stats.beep == 3){
+    else if(proto_mainboard_stats.beep == 3){
         buzzer_default_beep();
-        stats.beep = 1;
+        proto_mainboard_stats.beep = 1;
     }
 
-    if (stats.alarmStatus) {
+    if (proto_mainboard_stats.alarmStatus) {
         buzzer_default_beep();
-        stats.alarmStatus = 0;
+        proto_mainboard_stats.alarmStatus = 0;
     }
 }
 
@@ -209,19 +209,19 @@ void proto_command(comm_chan *channel, QueueHandle_t display_queue) {
             /* Write speed and brake */
         case 3: {
             /* I don't know what this command does, seems to be the way to actually write the speed and brake values */
-            uint8_t command[] = {0x55, 0xAA, 0x7, 0x20, 0x65, 0x0, 0x4, speed, brake, 0x0, stats.beep, 0x0, 0x0};
+            uint8_t command[] = {0x55, 0xAA, 0x7, 0x20, 0x65, 0x0, 0x4, speed, brake, 0x0, proto_mainboard_stats.beep, 0x0, 0x0};
             proto_add_crc(command, sizeof(command));
             comm_copy_tx_chan(channel, command, sizeof(command));
-            if (stats.beep)
-                stats.beep = 0;
+            if (proto_mainboard_stats.beep)
+                proto_mainboard_stats.beep = 0;
             break;
         }
         case 4: {
-            uint8_t command[] = {0x55, 0xAA, 0x9, 0x20, 0x64, 0x0, 0x6, speed, brake, 0x0, stats.beep, 0x72, 0x0, 0x0, 0x0};
+            uint8_t command[] = {0x55, 0xAA, 0x9, 0x20, 0x64, 0x0, 0x6, speed, brake, 0x0, proto_mainboard_stats.beep, 0x72, 0x0, 0x0, 0x0};
             proto_add_crc(command, sizeof(command));
             comm_copy_tx_chan(channel, command, sizeof(command));
-            if (stats.beep)
-                stats.beep = 0;
+            if (proto_mainboard_stats.beep)
+                proto_mainboard_stats.beep = 0;
             break;
         }
         case 5: {
