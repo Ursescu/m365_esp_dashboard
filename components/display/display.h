@@ -7,8 +7,7 @@
 #define SKULL "/spiffs/skull.bmp"
 #define TURTLE "/spiffs/turtle.bmp"
 
-#define TAHOMA "/spiffs/fonts/tahoma.fon"
-#define TAHOMA_BOLD "/spiffs/fonts/tahomabold.fon"
+#define TAHOMA "/spiffs/fonts/dm.fon"
 
 void display_refresh();
 
