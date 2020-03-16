@@ -123,4 +123,12 @@ menu "M365 Dashboard"
         int "Beep duration"
         default 500
 
+    config M365_FRONT_LED_GPIO
+        int "Front LED GPIO"
+        default 12
+
+    config M365_BUTTON_CTRL
+        int "GPIO that controls center button behaviour"
+        default 21
+
 endmenu
