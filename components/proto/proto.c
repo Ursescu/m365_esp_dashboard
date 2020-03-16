@@ -143,7 +143,7 @@ static void process_command(const uint8_t *command, uint16_t size) {
     }
 }
 
-static void process_buffer(comm_chan *channel, QueueHandle_t display_queue) {
+static void process_buffer(comm_chan *channel) {
     /* 
      * Hack to eliminate what it's send on tx
      * Start reading from rx buffer at position tx_size (suppose no packet was lost in tx)
@@ -184,14 +184,14 @@ static void process_buffer(comm_chan *channel, QueueHandle_t display_queue) {
     }
 }
 
-void proto_command(comm_chan *channel, QueueHandle_t display_queue) {
+void proto_command(comm_chan *channel) {
     static uint8_t messageType = 0;
 
     uint8_t brake = adc_brake();
     uint8_t speed = adc_speed();
 
-    /* Process what's received and update the display */
-    process_buffer(channel, display_queue);
+    /* Process what's received */
+    process_buffer(channel);
 
     if (!connected()) {
         ESP_LOGD(TAG, "Not connected \n");

@@ -37,8 +37,6 @@ comm_chan uart_channel;
 SemaphoreHandle_t rx_sem = NULL;
 SemaphoreHandle_t comm_sem = NULL;
 
-QueueHandle_t display_queue;
-
 static void tx_task(TimerHandle_t xTimer) {
     /* Tx task 
      * Send data at known time interval
@@ -86,7 +84,7 @@ static void comm_task() {
          */
 
         /* Process command and prepare the sending command */
-        proto_command(&uart_channel, display_queue);
+        proto_command(&uart_channel);
 
         /* Done processing command */
     }
