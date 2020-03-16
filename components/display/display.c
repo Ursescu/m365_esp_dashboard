@@ -12,15 +12,28 @@
 #include "driver/gpio.h"
 
 #include "display.h"
+#include "proto.h"
 
 static time_t time_now, time_last = 0;
 
+char velocityBuffer[10];
+
 void refreshDisplay() {
     TFT_setFont(USER_FONT, TAHOMA);
-    TFT_print("21:48", 0, 8);
-    TFT_bmp_image(0, 42, 0, RABBIT, NULL, 0);
-    TFT_bmp_image(0, 84, 0, SKULL, NULL, 0);
-    TFT_bmp_image(0, 126, 0, TURTLE, NULL, 0);
+
+    sprintf(velocityBuffer, "%.2f", proto_mainboard_stats.velocity * 1.60934);
+
+    TFT_fillWindow(TFT_BLACK);
+    TFT_print(velocityBuffer, 0, 8);
+
+    sprintf(velocityBuffer, "%u", proto_mainboard_stats.battery);
+
+    TFT_print(velocityBuffer, 0, 50);
+    // TFT_bmp_image(0, 42, 0, RABBIT, NULL, 0);
+    // TFT_bmp_image(0, 84, 0, SKULL, NULL, 0);
+    // TFT_bmp_image(0, 126, 0, TURTLE, NULL, 0);
+
+    vTaskDelay(300 / portTICK_PERIOD_MS);
 }
 
 void initDisplay() {
