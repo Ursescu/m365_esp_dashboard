@@ -20,7 +20,7 @@ static time_t time_now, time_last = 0;
 
 char velocityBuffer[10];
 
-void refreshDisplay() {
+void display_refresh() {
     TFT_setFont(USER_FONT, TAHOMA);
 
     sprintf(velocityBuffer, "%.2f", proto_mainboard_stats.velocity * 1.60934);
@@ -38,7 +38,7 @@ void refreshDisplay() {
     vTaskDelay(300 / portTICK_PERIOD_MS);
 }
 
-void initDisplay() {
+void display_init() {
     esp_err_t ret;
 
     // === SET GLOBAL VARIABLES ==========================

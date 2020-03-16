@@ -10,8 +10,8 @@
 #define TAHOMA "/spiffs/fonts/tahoma.fon"
 #define TAHOMA_BOLD "/spiffs/fonts/tahomabold.fon"
 
-void refreshDisplay();
+void display_refresh();
 
-void initDisplay();
+void display_init();
 
 #endif
