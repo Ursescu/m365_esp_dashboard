@@ -11,6 +11,9 @@ extern const char *TAG;
 
 #define DEBUG_BUFF_SIZE (CONFIG_M365_BUFF_SIZE)
 
+/* Get current time macro */
+#define GET_TIME() ((uint32_t)(clock() * 1000 / CLOCKS_PER_SEC))
+
 void print_command(const uint8_t *, const uint16_t);
 
 uint32_t map(uint32_t, uint32_t, uint32_t, uint32_t, uint32_t);

@@ -7,9 +7,6 @@
 
 #include <time.h>
 
-/* Get current time macro */
-#define GET_TIME() ((uint32_t)(clock() * 1000 / CLOCKS_PER_SEC))
-
 #define TAG "proto"
 
 /* Protocol status structure 
