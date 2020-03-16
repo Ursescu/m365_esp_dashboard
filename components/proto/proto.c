@@ -67,7 +67,7 @@ static void print_stats() {
     ESP_LOGV(TAG, "Eco: %hhu \n", proto_mainboard_stats.eco);
     ESP_LOGV(TAG, "Led: %hhu \n", proto_mainboard_stats.led);
     ESP_LOGV(TAG, "Night: %hhu \n", proto_mainboard_stats.night);
-    ESP_LOGV(TAG, "proto_mainboard_Beep: %hhu \n", proto_mainboard_stats.beep);
+    ESP_LOGV(TAG, "Beep: %hhu \n", proto_mainboard_stats.beep);
     ESP_LOGV(TAG, "Eco: %hhu \n", proto_mainboard_stats.ecoMode);
     ESP_LOGV(TAG, "Cruise: %hhu \n", proto_mainboard_stats.cruise);
     ESP_LOGV(TAG, "Lock: %hhu \n", proto_mainboard_stats.lock);
