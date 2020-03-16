@@ -130,10 +130,10 @@ void wifi_init() {
 
     esp_websocket_client_start(client);
     char data[32];
-    int i = 0;
+    uint8_t i = 0;
     while (i < 10) {
         if (esp_websocket_client_is_connected(client)) {
-            int len = sprintf(data, "hello");
+            uint8_t len = sprintf(data, "hello");
             ESP_LOGI(TAG, "Sending %s", data);
             esp_websocket_client_send_text(client, data, len, portMAX_DELAY);
         }

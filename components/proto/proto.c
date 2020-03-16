@@ -18,8 +18,8 @@ proto_stat stats;
 uint32_t last_valid_message_time;
 
 uint8_t proto_verify_crc(uint8_t *message, uint8_t size) {
-    unsigned long cksm = 0;
-    for (int i = 2; i < size - 2; i++)
+    uint32_t cksm = 0;
+    for (uint8_t i = 2; i < size - 2; i++)
         cksm += message[i];
     cksm ^= 0xFFFF;
 
@@ -30,8 +30,8 @@ uint8_t proto_verify_crc(uint8_t *message, uint8_t size) {
 }
 
 void proto_add_crc(uint8_t *message, uint8_t size) {
-    unsigned long cksm = 0;
-    for (int i = 2; i < size - 2; i++)
+    uint32_t cksm = 0;
+    for (uint8_t i = 2; i < size - 2; i++)
         cksm += message[i];
     cksm ^= 0xFFFF;
     message[size - 2] = (uint8_t)(cksm & 0xFF);

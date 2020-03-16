@@ -26,7 +26,7 @@ void adc_init(void) {
 uint8_t adc_speed(void) {
     uint32_t adc_reading = 0;
     // Multisampling
-    for (int i = 0; i < NO_OF_SAMPLES; i++) {
+    for (uint8_t i = 0; i < NO_OF_SAMPLES; i++) {
         adc_reading += adc1_get_raw(ACCEL_CHANNEL);
     }
     adc_reading /= NO_OF_SAMPLES;
@@ -50,7 +50,7 @@ uint8_t adc_speed(void) {
 uint8_t adc_brake(void) {
     uint32_t adc_reading = 0;
     // Multisampling
-    for (int i = 0; i < NO_OF_SAMPLES; i++) {
+    for (uint8_t i = 0; i < NO_OF_SAMPLES; i++) {
         adc_reading += adc1_get_raw(BRAKE_CHANNEL);
     }
     adc_reading /= NO_OF_SAMPLES;
