@@ -47,6 +47,6 @@ extern proto_stat proto_mainboard_stats;
 void proto_add_crc(uint8_t *, uint8_t);
 uint8_t proto_verify_crc(uint8_t *, uint8_t);
 uint16_t proto_crc(const uint8_t *, uint16_t);
-void proto_command(comm_chan *, QueueHandle_t);
+void proto_command(comm_chan *);
 
 #endif
