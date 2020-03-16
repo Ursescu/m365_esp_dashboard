@@ -109,9 +109,8 @@ bool preferences_save(void) {
 }
 
 void preferences_print(void) {
-    printf("Preferences:\n");
-    printf("size: %hhu\n", dashboard_preferences.size);
-    printf("max speed: %hhu\n", dashboard_preferences.max_speed);
-    printf("min speed: %hhu\n", dashboard_preferences.min_speed);
-    printf("name: %s\n", dashboard_preferences.name);
+    ESP_LOGI(TAG, "size: %hhu\n", dashboard_preferences.size);
+    ESP_LOGI(TAG, "max speed: %hhu\n", dashboard_preferences.max_speed);
+    ESP_LOGI(TAG, "min speed: %hhu\n", dashboard_preferences.min_speed);
+    ESP_LOGI(TAG, "name: %s\n", dashboard_preferences.name);
 }
